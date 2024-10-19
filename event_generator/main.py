@@ -9,7 +9,9 @@ import redis
 
 app = FastAPI()
 
-redis_address = os.getenv("REDIS_ADDRESS", "")
+redis_address = os.getenv("REDIS_ADDRESS")
+if redis_address is None:
+    redis_address = "localhost:6379"
 host, port = redis_address.split(":")
 port = int(port)
 
@@ -35,9 +37,9 @@ async def root():
 
 @app.get("/payment")
 async def payment():
-    webhook_payload_json = get_payment()
+    webhook_payload_json = json.dumps(get_payment())
 
     # publish json string to 'payments' channel in Redis
-    # redis_connection.publish('payments', webhook_payload_json)
+    redis_connection.publish('payments', webhook_payload_json)
 
     return webhook_payload_json

@@ -1,12 +1,12 @@
-version: '3.9'
+version: '3.3'
 
 services:
   redis:
     image: redis:alpine
   
   api:
-    build: ./api/
-    container_name: api
+    build: ./event_generator/
+    container_name: event_generator
     env_file:
       - .env
     restart: always
