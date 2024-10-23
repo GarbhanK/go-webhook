@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-type Payload struct {
+type PaymentPayload struct {
 	Event   string
 	Date    string
 	Id      string

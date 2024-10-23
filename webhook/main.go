@@ -38,7 +38,7 @@ func main() {
 	log.Println("Connected to Redis:", pong)
 
 	// create a channel to act as the queue
-	webhookQueue := make(chan redisClient.WebhookPayload, 100)
+	webhookQueue := make(chan redisClient.PaymentPayload, 100)
 
 	go queue.ProcessWebhooks(ctx, webhookQueue)
 

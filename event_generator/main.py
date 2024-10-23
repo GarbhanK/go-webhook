@@ -31,9 +31,24 @@ def get_payment():
     }
     return random_payload
 
+def get_song():
+    random_payload = {
+        'url': os.getenv("WEBHOOK_ADDRESS", ""),
+        'webhookId': uuid.uuid4().hex,
+        'data': {
+            'id': uuid.uuid4().hex,
+            'song_title': random.choice(["Southern Nights", "So Into You", "Song 2", "Gee Baby"]),
+            'event': random.choice(["played", "paused", "add_favourite", "remove_favourite"]),
+            'created': dt.datetime.now().strftime("%d/%m/%Y, %H:%M:%S"),
+        }
+    }
+    return random_payload
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
 
 @app.get("/payment")
 async def payment():
@@ -43,6 +58,17 @@ async def payment():
     redis_connection.publish('payments', webhook_payload_json)
 
     return webhook_payload_json
+
+
+@app.get("/song")
+async def song():
+    webhook_payload_json = json.dumps(get_song())
+
+    # publish json string to 'payments' channel in Redis
+    redis_connection.publish('songs', webhook_payload_json)
+
+    return webhook_payload_json
+
 
 if __name__ == "__main__":
     import uvicorn

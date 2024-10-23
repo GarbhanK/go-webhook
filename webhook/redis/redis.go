@@ -10,7 +10,7 @@ import (
 
 // WebhookPayload defines the structure of data expected
 // to be recieved from Redis, including URL, WebhookID, and relevant Data
-type WebhookPayload struct {
+type PaymentPayload struct {
 	Url       string `json:"url"`
 	WebhookId string `json:"webhookId"`
 	Data      struct {
@@ -21,7 +21,7 @@ type WebhookPayload struct {
 	} `json:"data"`
 }
 
-func Subscribe(ctx context.Context, client *redis.Client, webhookQueue chan WebhookPayload) error {
+func Subscribe(ctx context.Context, client *redis.Client, webhookQueue chan PaymentPayload) error {
 	// subscribe to webhooks channel in redis
 	pubSub := client.Subscribe(ctx, "payments")
 
@@ -32,7 +32,7 @@ func Subscribe(ctx context.Context, client *redis.Client, webhookQueue chan Webh
 		}
 	}(pubSub)
 
-	var payload WebhookPayload
+	var payload PaymentPayload
 
 	// infinte loop to continuously recieve messages from 'webhooks' channel
 	for {

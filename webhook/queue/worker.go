@@ -10,9 +10,9 @@ import (
 )
 
 // iterate through the webhooks in the channel queue and send on the url
-func ProcessWebhooks(ctx context.Context, webhookQueue chan redisClient.WebhookPayload) {
+func ProcessWebhooks(ctx context.Context, webhookQueue chan redisClient.PaymentPayload) {
 	for payload := range webhookQueue {
-		go func(p redisClient.WebhookPayload) {
+		go func(p redisClient.PaymentPayload) {
 			backoffTime := time.Second
 			maxBackoffTime := time.Hour
 			retries := 0
