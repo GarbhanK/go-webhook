@@ -27,3 +27,6 @@ go.work.sum
 # python
 venv
 __pycache__
+
+# me
+bin
