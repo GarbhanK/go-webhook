@@ -43,3 +43,7 @@ async def payment():
     redis_connection.publish('payments', webhook_payload_json)
 
     return webhook_payload_json
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
