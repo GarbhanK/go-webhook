@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"reflect"
 
 	"github.com/garbhank/go-webhook/queue"
 	redisClient "github.com/garbhank/go-webhook/redis"
@@ -37,16 +38,20 @@ func main() {
 	}
 	log.Println("Connected to Redis:", pong)
 
-	// create a channel to act as the queue
-	webhookQueue := make(chan redisClient.PaymentPayload, 100)
+	// create channels to act as the queue
+	paymentQueue := make(chan redisClient.PaymentPayload, 100)
+	songQueue := make(chan redisClient.SongPayload, 100)
 
-	go queue.ProcessWebhooks(ctx, webhookQueue)
+	go queue.ProcessWebhooks(ctx, paymentQueue)
+	go queue.ProcessWebhooks(ctx, songQueue)
 
 	// subscribe to 'transactions' channel
-	err = redisClient.Subscribe(ctx, client, webhookQueue)
+	err = redisClient.Subscribe(ctx, client, paymentQueue)
 	if err != nil {
 		log.Println("Error subscribing:", err)
 	}
+
+	err = redisClient.Subscribe(ctx, client, songQueue, reflect.TypeOf(redisClient.PaymentPayload{}))
 
 	// create infinite loop to keep the program running
 	select {}

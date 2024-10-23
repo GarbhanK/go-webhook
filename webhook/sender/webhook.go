@@ -16,6 +16,13 @@ type PaymentPayload struct {
 	Payment string
 }
 
+type SongPayload struct {
+	Event     string
+	Date      string
+	Id        string
+	SongTitle string
+}
+
 // sends a JSON POST req to the specified URL and updates event status in the db
 func SendWebhook(data interface{}, url string, webhookId string) error {
 	// marshal data into json

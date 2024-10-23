@@ -2,7 +2,9 @@ package queue
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"reflect"
 	"time"
 
 	redisClient "github.com/garbhank/go-webhook/redis"
@@ -10,9 +12,22 @@ import (
 )
 
 // iterate through the webhooks in the channel queue and send on the url
-func ProcessWebhooks(ctx context.Context, webhookQueue chan redisClient.PaymentPayload) {
+func ProcessWebhooks(ctx context.Context, webhookQueue chan interface{}) {
 	for payload := range webhookQueue {
-		go func(p redisClient.PaymentPayload) {
+
+		channelType := reflect.ValueOf(p).Type().Elem()
+
+		switch channelType.Name() {
+		case "PaymentPayload":
+			p = redisClient.PaymentPayload{}
+		case "SongPayload":
+			p = redisClient.SongPayload{}
+		default:
+			errMsg := fmt.Sprintf("unknown type: %s", channelType.Name())
+			fmt.Println(errMsg)
+		}
+
+		go func(p channelType) {
 			backoffTime := time.Second
 			maxBackoffTime := time.Hour
 			retries := 0
