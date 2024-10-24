@@ -1,6 +1,6 @@
 module github.com/garbhank/go-webhook
 
-go 1.21.0
+go 1.21
 
 require github.com/go-redis/redis/v8 v8.11.5
 

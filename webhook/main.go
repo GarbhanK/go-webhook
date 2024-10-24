@@ -39,20 +39,19 @@ func main() {
 	log.Println("Connected to Redis:", pong)
 
 	// create channels to act as the queue
-	paymentQueue := make(chan redisClient.PaymentPayload, 100)
-	songQueue := make(chan redisClient.SongPayload, 100)
+	payloadQueue := make(chan interface{}, 100)
 
-	go queue.ProcessWebhooks(ctx, paymentQueue)
-	go queue.ProcessWebhooks(ctx, songQueue)
+	go queue.ProcessWebhooks(ctx, payloadQueue)
 
 	// subscribe to 'transactions' channel
-	err = redisClient.Subscribe(ctx, client, paymentQueue)
+	err = redisClient.Subscribe(ctx, client, payloadQueue)
 	if err != nil {
 		log.Println("Error subscribing:", err)
 	}
 
-	err = redisClient.Subscribe(ctx, client, songQueue, reflect.TypeOf(redisClient.PaymentPayload{}))
+	err = redisClient.Subscribe(ctx, client, songQueue)
 
 	// create infinite loop to keep the program running
 	select {}
 }
+
